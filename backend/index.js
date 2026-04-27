@@ -1,31 +1,35 @@
 require("dotenv").config();
 
+const express = require("express");
 const { runBot } = require("./runbot");
 
-console.log("🚀 Smart Bot Starting...");
-
-let running = false;
-
-setInterval(async () => {
-  if (running) return;
-
-  running = true;
-
-  await runBot();
-
-  running = false;
-
-}, 120000);
-
-const express = require("express");
 const app = express();
 
+// ✅ BASIC ROUTE (so browser shows something)
+app.get("/", (req, res) => {
+  res.send("🚀 Smart News Bot is running...");
+});
+
+// ✅ STATUS ROUTE (for your dashboard / testing)
 app.get("/status", (req, res) => {
   res.json({
-    btc: global.lastBTC || 0,
+    btc: global.lastBTC || null,
     whales: global.lastWhales || [],
-    signal: global.lastSignal || "HOLD"
+    signal: global.lastSignal || "N/A"
   });
 });
 
-app.listen(3000, () => console.log("Dashboard running on port 3000"));
+// ✅ IMPORTANT: USE RENDER PORT
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Dashboard running on port ${PORT}`);
+});
+
+// ✅ RUN BOT EVERY 60 SECONDS
+setInterval(async () => {
+  await runBot();
+}, 60000);
+
+// ✅ RUN IMMEDIATELY ON START
+runBot();
