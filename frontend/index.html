@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Crypto Intelligence Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    .buy { color: #22c55e; }
+    .sell { color: #ef4444; }
+    .hold { color: #facc15; }
+  </style>
+</head>
+<body>
+
+<h1>🚀 Crypto Intelligence Dashboard</h1>
+
+<div class="card">
+  <h2>BTC Price</h2>
+  <p id="btc">Loading...</p>
+</div>
+
+<div class="card">
+  <h2>Signal</h2>
+  <p id="signal">Loading...</p>
+</div>
+
+<div class="card">
+  <h2>Whales</h2>
+  <p id="whales">Loading...</p>
+</div>
+
+<script>
+async function fetchData() {
+  const res = await fetch("http://localhost:3000/status");
+  const data = await res.json();
+
+  document.getElementById("btc").innerText = "$" + data.btc;
+  document.getElementById("whales").innerText = data.whales;
+
+  const signalEl = document.getElementById("signal");
+  signalEl.innerText = data.signal;
+
+  signalEl.className =
+    data.signal.includes("BUY") ? "buy" :
+    data.signal.includes("SELL") ? "sell" : "hold";
+}
+
+setInterval(fetchData, 5000);
+fetchData();
+</script>
+
+</body>
+</html>
